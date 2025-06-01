@@ -1,0 +1,47 @@
+Timestamp	Text
+---------	----
+00:00.400	If you're building AI agents, you've probably heard about MCP or Model Context Protocol.
+00:05.240	MCP is a new open source standard to connect your agents to data sources such as databases or APIs.
+00:11.679	MCP consists of multiple components.
+00:13.939	The most important ones are the host, the client, and the server.
+00:17.219	So let's break it down.
+00:19.530	At the very top you would have your MCP host.
+00:22.570	Your MCP host will include an MCP client.
+00:25.910	And it could also include multiple clients.
+00:28.370	The MCP host could be an application such as a chat app.
+00:33.630	It could also be a code assistant in your IDE, and much more.
+00:38.520	The MCP host will connect to an MCP server.
+00:41.600	It can actually connect to multiple MCP servers as well.
+00:48.799	It doesn't matter how many MCP servers you connect to your MCP host or client.
+00:53.189	The MCP host and servers will connect over each other through the MCP protocol.
+00:57.630	The MCP protocol is a transport layer in the middle.
+01:04.930	Whenever your MCP host or client needs a tool, it's going to connect to the MCP server.
+01:09.290	The MCP server will then connect to, for example, a database.
+01:12.909	And it doesn't matter if this is a relational database or a NoSQL database.
+01:17.069	It could also connect to APIs.
+01:20.500	And also the API standard doesn't really matter.
+01:23.120	Finally, it could also connect to data sources such as a local file type or maybe code.
+01:30.590	This is especially useful when you're building something like a code assistant in your IDE.
+01:36.579	Let's look at an example of how to use MCP in practice.
+01:40.120	We still have the three components.
+01:41.599	We would have our MCP host and client,
+01:46.019	of course, we also have a large language model,
+01:53.170	and finally, we have our MCP servers,
+01:56.030	and these could be multiple MCP servers or just a single one.
+02:03.430	Let's assume our MCP client and host is a chat app,
+02:07.022	and you ask a question such as, what is the weather like in a certain location or how many customers do I have?
+02:13.289	The MCP host will need to retrieve tools from the MCP server.
+02:18.719	The MCP server will then conclude and tell which tools are available.
+02:23.319	From the MCP host, you would then have to connect to the large language model
+02:26.633	and send over your question plus the available tools.
+02:30.960	If all is well, the LLM will reply and tell you which tools to use.
+02:38.280	Once the MCP host and client knows which tools to use, it knows which MCP servers to call.
+02:43.599	So when it calls the MCP server in order to get a tool result,
+02:48.846	the MCP server will be responsible for executing something that goes to a database, to an API, or a local piece of code,
+02:59.069	and of course, there could be subsequent calls to MCP servers.
+03:02.889	The MCP server will apply with a response, which you can send back to the LLM.
+03:07.849	And finally, you should be able to get your final answer based on the question that you asked in the chat application.
+03:15.060	If you are building agents, I'd really advise you to look at MCP protocol.
+03:18.800	The MCP protocol is a new standard which will help you to connect your data sources via MCP server to any agent.
+03:25.280	Even though you might not be building agents, your client might be building agents.
+03:29.439	And if you enjoyed this video, make sure to like and subscribe.

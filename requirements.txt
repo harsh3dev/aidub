@@ -1,0 +1,4 @@
+youtube_transcript_api
+murf
+yt_dlp
+deep_translator
