@@ -1,4 +1,9 @@
-youtube_transcript_api
-murf
-yt_dlp
-deep_translator
+flask==2.0.1
+flask-cors==3.0.10
+youtube-transcript-api==0.4.4
+deep-translator==1.9.1
+gTTS==2.3.1
+pydub==0.25.1
+certifi==2023.7.22
+Werkzeug==2.0.3
+pyOpenSSL==23.2.0 
