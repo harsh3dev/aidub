@@ -22,6 +22,7 @@ function createHiddenAudioElement() {
     `;
     audioElement.controls = true;
     audioElement.crossOrigin = 'anonymous'; // Enable CORS
+    audioElement.volume = 0.8; // Set default volume to 80%
     document.body.appendChild(audioElement);
     return audioElement;
 }
@@ -232,9 +233,10 @@ function setupVideoControls(video) {
     // Handle play/pause
     video.addEventListener('play', () => {
         if (translatedAudio) {
+            // Ensure audio starts at the same position as video
             translatedAudio.currentTime = video.currentTime;
             translatedAudio.muted = false;
-            translatedAudio.volume = 1;
+            translatedAudio.volume = 0.8; // Set default volume to 80%
             translatedAudio.play().catch(error => {
                 console.error('Error playing translated audio:', error);
             });
@@ -273,7 +275,8 @@ function setupVideoControls(video) {
     // Handle volume change
     video.addEventListener('volumechange', () => {
         if (translatedAudio) {
-            translatedAudio.volume = video.volume;
+            // Keep translated audio volume at 80% of video volume
+            translatedAudio.volume = Math.min(video.volume * 0.8, 1);
         }
     });
 
