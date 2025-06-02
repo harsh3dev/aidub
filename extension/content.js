@@ -6,11 +6,20 @@ let isPlaying = false;
 let isProcessing = false;
 let controlButton = null;
 
-// Create and inject hidden audio element
+// Create and inject visible audio element for testing
 function createHiddenAudioElement() {
     const audioElement = document.createElement('audio');
     audioElement.id = 'murfai-translated-audio';
-    audioElement.style.display = 'block';
+    audioElement.style.cssText = `
+        position: fixed;
+        bottom: 150px;
+        right: 20px;
+        z-index: 9999;
+        background-color: rgba(0, 0, 0, 0.8);
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    `;
     audioElement.controls = true;
     audioElement.crossOrigin = 'anonymous'; // Enable CORS
     document.body.appendChild(audioElement);
@@ -154,7 +163,7 @@ async function handleVideoTranslation(voiceId) {
 
         console.log('Received audio URL:', data.audioUrl);
         
-        // Create or get hidden audio element
+        // Create or get visible audio element
         let audioElement = document.getElementById('murfai-translated-audio');
         if (!audioElement) {
             audioElement = createHiddenAudioElement();
@@ -162,6 +171,9 @@ async function handleVideoTranslation(voiceId) {
 
         // Set audio source and properties
         audioElement.src = data.audioUrl;
+        audioElement.muted = false;        
+        audioElement.volume = 1;
+
         audioElement.loop = false;
         translatedAudio = audioElement;
 
@@ -181,6 +193,8 @@ async function handleVideoTranslation(voiceId) {
         // Don't automatically start playing - wait for button click
         audioElement.currentTime = video.currentTime;
         isPlaying = false;
+        audioElement.muted = false;
+        audioElement.volume = 1;
         controlButton.innerHTML = '🔊 Play Translation';
 
         return true;
@@ -219,6 +233,8 @@ function setupVideoControls(video) {
     video.addEventListener('play', () => {
         if (translatedAudio) {
             translatedAudio.currentTime = video.currentTime;
+            translatedAudio.muted = false;
+            translatedAudio.volume = 1;
             translatedAudio.play().catch(error => {
                 console.error('Error playing translated audio:', error);
             });
