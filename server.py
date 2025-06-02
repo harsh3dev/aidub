@@ -11,6 +11,19 @@ import uuid
 import shutil
 import time
 import json
+import cloudinary
+import cloudinary.uploader
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -135,7 +148,7 @@ def get_transcript(video_id):
         
         # Try to get transcript in any available language
         transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-        print(f"Available transcripts: {transcript_list}")
+        print(f"Available transcripts: For this video ({video_id}) transcripts are available in the following languages:")
         
         # First try to get English transcript
         try:
@@ -149,9 +162,10 @@ def get_transcript(video_id):
             print(f"Found transcript in language: {transcript.language_code}")
         
         # Get transcript data with retries
-        max_retries = 3
+        max_retries = 5  # Increased from 3 to 5
         retry_count = 0
         transcript_data = None
+        last_error = None
         
         while retry_count < max_retries:
             try:
@@ -160,7 +174,8 @@ def get_transcript(video_id):
                 print(f"Got {len(transcript_data)} transcript segments")
                 break
             except Exception as e:
-                print(f"Error fetching transcript data (attempt {retry_count + 1}): {str(e)}")
+                last_error = str(e)
+                print(f"Error fetching transcript data (attempt {retry_count + 1}): {last_error}")
                 retry_count += 1
                 if retry_count < max_retries:
                     print("Retrying with preserved formatting...")
@@ -170,8 +185,17 @@ def get_transcript(video_id):
                         break
                     except Exception as e2:
                         print(f"Error fetching with preserved formatting: {str(e2)}")
+                        time.sleep(1)  # Add delay between retries
                 else:
-                    raise Exception("Could not fetch transcript data after multiple attempts")
+                    # Try alternative method as last resort
+                    try:
+                        print("Trying alternative transcript fetching method...")
+                        transcript_data = transcript.fetch(manual_captions=True)
+                        print(f"Got {len(transcript_data)} transcript segments using alternative method")
+                        break
+                    except Exception as e3:
+                        print(f"Alternative method failed: {str(e3)}")
+                        raise Exception(f"Could not fetch transcript data after {max_retries} attempts. Last error: {last_error}")
         
         if not transcript_data:
             raise Exception("No transcript data received")
@@ -291,39 +315,66 @@ def translate_video():
     try:
         data = request.json
         video_url = data.get('videoUrl')
-        target_language = data.get('targetLanguage', 'hi')  # Default to Hindi
-        
-        if not video_url:
-            return jsonify({'error': 'No video URL provided'}), 400
-        
-        # Extract video ID
-        video_id = extract_video_id(video_url)
-        if not video_id:
-            return jsonify({'error': 'Invalid YouTube URL'}), 400
-        
-        print(f"Processing video: {video_url}")
-        print(f"Video ID: {video_id}")
-        print(f"Target language: {target_language}")
-        
-        # Get transcript
-        transcript, source_language = get_transcript(video_id)
-        
-        # Translate transcript
-        translated_text = translate_text(transcript, target_language)
-        
-        # Convert to speech
-        audio_filename = text_to_speech(translated_text, target_language)
-        
-        # Return the audio URL and other data
-        return jsonify({
-            'success': True,
-            'audioUrl': f'http://localhost:5000/audio/{audio_filename}',
-            'transcript': transcript,
-            'translatedText': translated_text
-        })
-        
+        voice_id = data.get('voiceId')
+        target_language = data.get('targetLanguage', 'hi-IN')
+
+        if not video_url or not voice_id:
+            return jsonify({'error': 'Missing required parameters'}), 400
+
+        # Create temporary directory for processing
+        temp_dir = tempfile.mkdtemp()
+        try:
+            # Get video ID and transcript
+            video_id = extract_video_id(video_url)
+            if not video_id:
+                return jsonify({'error': 'Invalid YouTube URL'}), 400
+
+            transcript_data, source_language = get_transcript(video_id)
+            if not transcript_data:
+                return jsonify({'error': 'Could not get transcript'}), 400
+
+            # Translate the transcript
+            translated_text = translate_text(transcript_data, target_language)
+            if not translated_text:
+                return jsonify({'error': 'Translation failed'}), 500
+
+            # Generate audio file
+            audio_filename = f"{uuid.uuid4()}.mp3"
+            audio_path = os.path.join(AUDIO_DIR, audio_filename)
+            
+            # Convert text to speech
+            tts = gTTS(text=translated_text, lang=map_language_code(target_language))
+            tts.save(audio_path)
+
+            # Upload to Cloudinary
+            try:
+                result = cloudinary.uploader.upload(
+                    audio_path,
+                    resource_type='raw',
+                    public_id=f'translated_audio_{video_id}',
+                    overwrite=True
+                )
+                
+                # Clean up local file
+                os.remove(audio_path)
+                
+                return jsonify({
+                    'success': True,
+                    'audioUrl': result['secure_url']
+                })
+            except Exception as e:
+                print(f"Cloudinary upload error: {str(e)}")
+                # Fallback to local file serving if Cloudinary fails
+                return jsonify({
+                    'success': True,
+                    'audioUrl': f"http://localhost:5000/audio/{audio_filename}"
+                })
+
+        finally:
+            # Clean up temporary directory
+            shutil.rmtree(temp_dir)
+
     except Exception as e:
-        print(f"Error in translation endpoint: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 # Clean up old audio files periodically

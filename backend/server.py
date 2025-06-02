@@ -4,9 +4,34 @@ import os
 from main import translate_and_create_timed_audio, get_transcript, get_video_id
 import tempfile
 import shutil
+import cloudinary
+import cloudinary.uploader
+from dotenv import load_dotenv
+import ssl
+from fastapi.middleware.cors import CORSMiddleware
+
+
+# Load environment variables
+load_dotenv()
+
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
 app = Flask(__name__)
 CORS(app)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # can also be ["*"] to allow all
+    allow_credentials=True,
+    allow_methods=["*"],    # or restrict to ["GET", "POST"]
+    allow_headers=["*"],
+)
+
 
 @app.route('/translate', methods=['POST'])
 def translate_video():
@@ -41,11 +66,17 @@ def translate_video():
             if not audio_segments:
                 return jsonify({'error': 'Failed to generate audio'}), 500
 
-            # Return the audio file URL
-            audio_url = f"http://localhost:5000/audio/translated_audio.wav"
+            # Upload audio file to Cloudinary
+            result = cloudinary.uploader.upload(
+                'translated_audio_only.wav',
+                resource_type='raw',
+                public_id=f'translated_audio_{video_id}'
+            )
+
+            # Return the Cloudinary URL
             return jsonify({
                 'success': True,
-                'audioUrl': audio_url
+                'audioUrl': result['secure_url']
             })
 
         finally:
@@ -60,4 +91,9 @@ def serve_audio(filename):
     return send_from_directory('.', filename)
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    # Create SSL context
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.load_cert_chain('cert.pem', 'key.pem')
+    
+    # Run the app with SSL
+    app.run(debug=True, ssl_context=context, host='0.0.0.0', port=5000) 
