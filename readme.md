@@ -70,9 +70,10 @@ This project is licensed under the [MIT License](LICENSE).
 ## 👤 Author
 
 - **Harsh Pandey**
-  - GitHub: [@harsh3dev](https://github.com/harsh3dev)
-  - LinkedIn: [Harsh Pandey](https://www.linkedin.com/in/harsh3dev/)
-  - Twitter: [@harshxai](https://twitter.com/harshxai)
+- **Yash Gupta**
+- **Aditya Mondal**
+- **Debayan Ghosh**
+- **Soumyadeep Basak**
 
 ---
 
