@@ -84,7 +84,8 @@ def get_transcript_via_ytdlp(video_url):
         print(f"Error extracting subtitles via yt-dlp: {e}")
         return None
 
-def get_transcript(video_id, language_code='en-GB'):
+def get_transcript(video_id, language_code='en'):
+    print(f"Attempting to get transcript for video ID: {video_id}")
     try:
         # First, let's check what transcripts are available
         print("Checking available transcripts...")
@@ -99,43 +100,76 @@ def get_transcript(video_id, language_code='en-GB'):
                 'is_translatable': transcript.is_translatable
             })
         
-        print(f"Available transcripts: {available_transcripts}")
+        print(f"Available transcripts: For this video ({video_id}) transcripts are available in the following languages:")
+        for t in available_transcripts:
+            print(f"  - {t['language']} ({t['language_code']}) - Generated: {t['is_generated']}")
         
-        # Try to get transcript in the specified language first
-        try:
-            transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=[language_code])
-            print(f"Got transcript in {language_code}")
-        except Exception as e:
-            print(f"Could not get transcript in {language_code}: {e}")
-            
-            # Try to get any available transcript
+        # Try different language codes in order of preference
+        language_preferences = ['en', 'en-US', 'en-GB', language_code]
+        transcript_data = None
+        
+        for lang in language_preferences:
             try:
-                transcript_data = YouTubeTranscriptApi.get_transcript(video_id)
-                print("Got transcript in default language")
-            except Exception as e2:
-                print(f"Could not get any transcript: {e2}")
-                
-                # Try to get the first available transcript
-                try:
-                    if available_transcripts:
-                        first_lang = available_transcripts[0]['language_code']
-                        print(f"Trying to get transcript in {first_lang}")
-                        transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=[first_lang])
-                        print(f"Got transcript in {first_lang}")
-                    else:
-                        print("No transcripts available for this video")
-                        return None, None
-                except Exception as e3:
-                    print(f"Failed to get transcript in any language: {e3}")
+                print(f"Trying to get {lang} transcript...")
+                transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+                print(f"Found {lang} transcript")
+                break
+            except Exception as e:
+                print(f"Could not get transcript in {lang}: {e}")
+                continue
+        
+        # If specific languages didn't work, try to get any available transcript
+        if transcript_data is None:
+            try:
+                print("Trying to get any available transcript...")
+                # Get the first available transcript
+                if available_transcripts:
+                    first_transcript = available_transcripts[0]
+                    transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=[first_transcript['language_code']])
+                    print(f"Got transcript in {first_transcript['language']}")
+                else:
+                    print("No transcripts available for this video")
                     return None, None
+            except Exception as e:
+                print(f"Failed to get any transcript: {e}")
+                return None, None
+        
+        if transcript_data is None:
+            print("Could not retrieve transcript data")
+            return None, None
+        
+        # Return both the raw transcript data (with timestamps) and the combined text
+        full_text = ' '.join([entry['text'] for entry in transcript_data])
+        print(f"Successfully retrieved transcript with {len(transcript_data)} segments")
+        return transcript_data, full_text
         
     except Exception as e:
-        print(f"Error accessing transcript list: {e}")
+        print(f"Error accessing transcript: {e}")
+        # Fallback to yt-dlp method
+        print("Trying yt-dlp fallback method...")
+        video_url = f"https://www.youtube.com/watch?v={video_id}"
+        subtitle_text = get_transcript_via_ytdlp(video_url)
+        
+        if subtitle_text:
+            # Convert subtitle text to transcript format
+            # Split into segments (simplified - just by sentences)
+            sentences = subtitle_text.split('. ')
+            transcript_data = []
+            
+            for i, sentence in enumerate(sentences):
+                if sentence.strip():
+                    transcript_data.append({
+                        'text': sentence.strip() + ('.' if not sentence.endswith('.') else ''),
+                        'start': i * 3.0,  # Approximate timing
+                        'duration': 3.0
+                    })
+            
+            if transcript_data:
+                full_text = ' '.join([entry['text'] for entry in transcript_data])
+                print(f"Successfully retrieved transcript via yt-dlp with {len(transcript_data)} segments")
+                return transcript_data, full_text
+        
         return None, None
-    
-    # Return both the raw transcript data (with timestamps) and the combined text
-    full_text = ' '.join([entry['text'] for entry in transcript_data])
-    return transcript_data, full_text
 
 def download_video(url, output_path="original_video.mp4"):
     print("Downloading video...")
@@ -309,6 +343,7 @@ def save_transcript_with_timestamps(transcript_data, output_file, is_translated=
 
 def translate_and_create_timed_audio(transcript_data, target_language="es-ES", voice_id="es-ES-alvaro"):
     """Translate transcript segments and create audio files with proper timing"""
+    print(f"Using voice_id: {voice_id} for target_language: {target_language}")
     client = Murf(
         api_key="ap2_ea59bc87-70cf-4326-a2d3-4c6d58ebe307",
     )

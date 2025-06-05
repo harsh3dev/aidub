@@ -23,3 +23,8 @@ ENV/
 # Temporary files
 *.tmp
 temp/ 
+.vite/
+landing/.vite/
+# Logs
+*.log
+.*

@@ -46,16 +46,17 @@ def translate_video():
 
         # Create temporary directory for processing
         temp_dir = tempfile.mkdtemp()
-        try:
-            # Get video ID and transcript
+        try:            # Get video ID and transcript
             video_id = get_video_id(video_url)
             if not video_id:
                 return jsonify({'error': 'Invalid YouTube URL'}), 400
 
-            transcript_data, _ = get_transcript(video_id)
+            transcript_data, transcript_text = get_transcript(video_id)
             if not transcript_data:
-                return jsonify({'error': 'Could not get transcript'}), 400
+                return jsonify({'error': 'This video does not have captions available. Please try a different video with captions/subtitles.'}), 400
 
+            print(f"Retrieved transcript with {len(transcript_data)} segments")
+            
             # Process translation and audio generation
             audio_segments = translate_and_create_timed_audio(
                 transcript_data,

@@ -6,21 +6,20 @@ let isPlaying = false;
 let isProcessing = false;
 let controlButton = null;
 
-// Create and inject visible audio element for testing
+// Create and inject hidden audio element
 function createHiddenAudioElement() {
     const audioElement = document.createElement('audio');
     audioElement.id = 'murfai-translated-audio';
     audioElement.style.cssText = `
         position: fixed;
-        bottom: 150px;
-        right: 20px;
-        z-index: 9999;
-        background-color: rgba(0, 0, 0, 0.8);
-        border-radius: 5px;
-        padding: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        bottom: -1000px;
+        left: -1000px;
+        opacity: 0;
+        pointer-events: none;
+        visibility: hidden;
+        z-index: -1;
     `;
-    audioElement.controls = true;
+    audioElement.controls = false;
     audioElement.crossOrigin = 'anonymous'; // Enable CORS
     audioElement.volume = 0.8; // Set default volume to 80%
     document.body.appendChild(audioElement);
@@ -28,18 +27,16 @@ function createHiddenAudioElement() {
 }
 
 
-// Toggle audio playback
+// Toggle audio playback (for potential future use)
 function toggleAudioPlayback() {
     if (!translatedAudio) return;
     
     if (isPlaying) {
         translatedAudio.pause();
-        controlButton.innerHTML = '🔊 Play Translation';
     } else {
         translatedAudio.play().catch(error => {
             console.error('Error playing translated audio:', error);
         });
-        controlButton.innerHTML = '🔇 Pause Translation';
     }
     isPlaying = !isPlaying;
 }
@@ -88,18 +85,9 @@ async function handleVideoTranslation(voiceId) {
         const video = document.querySelector('video');
         if (!video) {
             throw new Error('Could not find video element');
-        }
-
-        // Store original volume
-        originalVolume = video.volume;
-
-        // Create control button if it doesn't exist
-        // if (!controlButton) {
-        //     controlButton = createControlButton();
-        //     controlButton.addEventListener('click', toggleAudioPlayback);
-        // }
-
-        console.log('Calling backend API...');
+        }        // Store original volume
+        originalVolume = video.volume;console.log('Calling backend API...');
+        console.log('Voice ID being sent:', voiceId);
         // Call backend API to process video
         const response = await fetch('http://localhost:5000/translate', {
             method: 'POST',
@@ -156,14 +144,11 @@ async function handleVideoTranslation(voiceId) {
         setupVideoControls(video);
 
         // Mute original video
-        video.volume = 0;
-
-        // Don't automatically start playing - wait for button click
+        video.volume = 0;        // Don't automatically start playing - wait for button click
         audioElement.currentTime = video.currentTime;
         isPlaying = false;
         audioElement.muted = false;
         audioElement.volume = 1;
-        controlButton.innerHTML = '🔊 Play Translation';
 
         return true;
     } catch (error) {
@@ -264,10 +249,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (translatedAudio) {
             translatedAudio.pause();
             translatedAudio = null;
-        }
-        if (controlButton) {
-            controlButton.remove();
-            controlButton = null;
         }
         const audioElement = document.getElementById('murfai-translated-audio');
         if (audioElement) {

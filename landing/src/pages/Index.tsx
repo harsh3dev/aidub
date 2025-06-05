@@ -73,22 +73,22 @@ const Index = () => {
     {
       title: "Extension Interface",
       description: "Clean and intuitive browser extension UI",
-      src: "/lovable-uploads/e9447739-72e5-45a9-b51e-abe3d197d734.png"
+      src: "/one.png"
     },
     {
       title: "Language Selection",
       description: "Easy language and voice selection panel",
-      src: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=800&h=600&fit=crop"
+      src: "/two.png"
     },
     {
       title: "Real-time Translation",
       description: "Live translation overlay on YouTube videos",
-      src: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&h=600&fit=crop"
+      src: "/three.png"
     },
     {
       title: "Settings Panel", 
       description: "Customizable translation preferences",
-      src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=600&fit=crop"
+      src: "/four.png"
     }
   ];
 
@@ -113,7 +113,7 @@ const Index = () => {
               <span className="text-red-400 font-semibold">Murf AI Translate API</span>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg">
+              <Button onClick={() => window.open('https://github.com/harsh3dev/aidub', '_blank')} size="lg" className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg">
                 <Download className="mr-2 h-5 w-5" />
                 Install Extension
               </Button>
@@ -189,13 +189,13 @@ const Index = () => {
             <Carousel className="w-full">
               <CarouselContent>
                 {prototypeImages.map((image, index) => (
-                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={index} className="basis-1/2">
                     <Card className="bg-slate-800/50 border-slate-700 overflow-hidden">
                       <div className="aspect-video bg-gradient-to-br from-red-500/20 to-purple-600/20 relative">
                         <img 
                           src={image.src} 
                           alt={image.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                           onError={(e) => {
                             const target = e.currentTarget as HTMLImageElement;
                             const fallback = target.nextElementSibling as HTMLElement;
@@ -321,7 +321,7 @@ const Index = () => {
             Join thousands of users experiencing YouTube content in their native language
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg">
+            <Button onClick={() => window.open('https://github.com/harsh3dev/aidub', '_blank')}  size="lg" className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 text-lg">
               <Download className="mr-2 h-5 w-5" />
               Download Free Extension
             </Button>
@@ -329,7 +329,7 @@ const Index = () => {
               variant="outline" 
               size="lg" 
               className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white px-8 py-4 text-lg"
-              onClick={() => window.open('https://github.com/your-username/voicesync-youtube', '_blank')}
+              onClick={() => window.open('https://github.com/harsh3dev/aidub', '_blank')}
             >
               <Github className="mr-2 h-5 w-5" />
               View on GitHub
