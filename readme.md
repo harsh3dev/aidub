@@ -16,27 +16,6 @@
 
 ---
 
-## 📁 Project Structure
-
-\`\`\`plaintext
-aidub/
-├── backend/                 # Backend server handling processing
-│   ├── server.py            # Main server script
-│   ├── requirements.txt     # Python dependencies
-├── extension/               # Browser extension (if applicable)
-├── landing/                 # Frontend landing page
-├── audio_files/             # Directory for audio processing
-├── final_video.mp4          # Output video with dubbed audio
-├── original_transcript.txt  # Extracted transcript from original audio
-├── translated_transcript.txt# Translated transcript
-├── translated_audio_only.wav# Synthesized audio in target language
-├── cert.pem                 # SSL certificate
-├── key.pem                  # SSL key
-├── .gitignore               # Git ignore file
-\`\`\`
-
----
-
 ## 🛠️ Installation
 
 ### Prerequisites
@@ -47,28 +26,28 @@ aidub/
 ### Steps
 
 1. Clone the repository:
-   \`\`\`bash
+   ```bash
    git clone https://github.com/harsh3dev/aidub.git
    cd aidub/backend
-   \`\`\`
+   ```
 
 2. Create a virtual environment and activate it:
-   \`\`\`bash
+   ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
-   \`\`\`
+   ```
 
 3. Install the required dependencies:
-   \`\`\`bash
+   ```bash
    pip install -r requirements.txt
-   \`\`\`
+   ```
 
 4. Run the server:
-   \`\`\`bash
+   ```bash
    python server.py
-   \`\`\`
+   ```
 
-5. Access the web interface at \`https://localhost:5000\` (ensure \`cert.pem\` and \`key.pem\` are present for SSL).
+5. Access the web interface at `https://localhost:5000` (ensure `cert.pem` and `key.pem` are present for SSL).
 
 ---
 
@@ -100,4 +79,4 @@ This project is licensed under the [MIT License](LICENSE).
 ## 🤝 Contributing
 
 Contributions are welcome! Please fork the repository and submit a pull request. For major changes, open an issue first to discuss potential improvements.
-EOF
+
