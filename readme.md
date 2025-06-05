@@ -1,8 +1,3 @@
-#!/bin/bash
-
-# Script to generate README.md for the aidub project
-
-cat << 'EOF' > README.md
 # 🎙️ AIDub
 
 **AIDub** is an AI-powered tool that automates the dubbing of videos into different languages. It processes an input video, extracts the audio, translates the transcript, synthesizes new audio in the target language, and merges it back with the original video. This solution is ideal for content creators, educators, and businesses aiming to reach a global audience.
