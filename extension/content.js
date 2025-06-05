@@ -27,41 +27,6 @@ function createHiddenAudioElement() {
     return audioElement;
 }
 
-// Create and inject control button
-function createControlButton() {
-    const button = document.createElement('button');
-    button.id = 'murfai-control-button';
-    button.innerHTML = '🔊 Play Translation';
-    button.disabled = true;  // Disable the button
-    button.style.cssText = `
-        position: fixed;
-        bottom: 80px;
-        right: 20px;
-        z-index: 9999;
-        padding: 10px 20px;
-        background-color: #ff0000;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
-        display: none;  /* Hide the button */
-    `;
-    
-    button.addEventListener('mouseover', () => {
-        button.style.backgroundColor = '#cc0000';
-    });
-    
-    button.addEventListener('mouseout', () => {
-        button.style.backgroundColor = '#ff0000';
-    });
-    
-    document.body.appendChild(button);
-    return button;
-}
 
 // Toggle audio playback
 function toggleAudioPlayback() {
@@ -129,10 +94,10 @@ async function handleVideoTranslation(voiceId) {
         originalVolume = video.volume;
 
         // Create control button if it doesn't exist
-        if (!controlButton) {
-            controlButton = createControlButton();
-            controlButton.addEventListener('click', toggleAudioPlayback);
-        }
+        // if (!controlButton) {
+        //     controlButton = createControlButton();
+        //     controlButton.addEventListener('click', toggleAudioPlayback);
+        // }
 
         console.log('Calling backend API...');
         // Call backend API to process video
