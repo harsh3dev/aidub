@@ -4,24 +4,73 @@
   <meta charset="UTF-8">
   <title>YouTube Video Translator</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
-    <h2>YouTube Video Translator</h2>
-    <div class="form-group">
-      <label for="voice-select">Select Voice:</label>
-      <select id="voice-select">
-        <option value="hi-IN-shaan">Male Voice (Shaan)</option>
-        <option value="hi-IN-shweta">Female Voice (Shweta)</option>
-      </select>
+    <div class="header">
+      <div class="icon-wrapper">
+        <svg class="app-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7V10C2 16 6 20.88 11.25 21.82C11.49 21.88 11.75 21.88 12 21.82C17.25 20.88 22 16 22 10V7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 12L11 14L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>YouTube Translator</h1>
+      <p class="subtitle">Transform videos with AI-powered translation</p>
     </div>
-    <button id="translate-btn" class="translate-btn">Translate Video</button>
+
+    <div class="form-section">
+      <div class="form-group">
+        <label for="voice-select">
+          <svg class="label-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1C14.5 1 16.5 3 16.5 5.5V11.5C16.5 14 14.5 16 12 16C9.5 16 7.5 14 7.5 11.5V5.5C7.5 3 9.5 1 12 1Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M19 10V11.5C19 15.65 15.65 19 11.5 19H12.5C15.65 19 19 15.65 19 11.5V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 19V23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Voice Selection
+        </label>
+        <div class="select-wrapper">
+          <select id="voice-select">
+            <option value="hi-IN-shaan">🎭 Male Voice (Shaan)</option>
+            <option value="hi-IN-shweta">🎪 Female Voice (Shweta)</option>
+          </select>
+          <svg class="select-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <button id="translate-btn" class="translate-btn">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5 8L3 7V5L5 4L7 5V7L5 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 7H21L19 12L21 17H3L5 12L3 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 13H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Translate Video</span>
+        <div class="btn-glow"></div>
+      </button>
+    </div>
+
     <div id="status" class="status"></div>
+    
     <div id="loading" class="loading" style="display: none;">
-      <div class="spinner"></div>
-      <p>Processing...</p>
+      <div class="spinner-container">
+        <div class="spinner"></div>
+        <div class="spinner-glow"></div>
+      </div>
+      <p class="loading-text">
+        <span class="processing-text">Processing your video</span>
+        <span class="dots">
+          <span>.</span>
+          <span>.</span>
+          <span>.</span>
+        </span>
+      </p>
     </div>
   </div>
   <script src="popup.js"></script>
 </body>
-</html> 
+</html>

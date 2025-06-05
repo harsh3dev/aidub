@@ -31,6 +31,7 @@ function createControlButton() {
     const button = document.createElement('button');
     button.id = 'murfai-control-button';
     button.innerHTML = '🔊 Play Translation';
+    button.disabled = true;  // Disable the button
     button.style.cssText = `
         position: fixed;
         bottom: 80px;
@@ -46,6 +47,7 @@ function createControlButton() {
         font-weight: bold;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         transition: all 0.3s ease;
+        display: none;  /* Hide the button */
     `;
     
     button.addEventListener('mouseover', () => {
