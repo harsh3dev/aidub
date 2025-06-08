@@ -345,7 +345,7 @@ def translate_and_create_timed_audio(transcript_data, target_language="es-ES", v
     """Translate transcript segments and create audio files with proper timing"""
     print(f"Using voice_id: {voice_id} for target_language: {target_language}")
     client = Murf(
-        api_key="ap2_ea59bc87-70cf-4326-a2d3-4c6d58ebe307",
+        api_key=os.getenv("MURF_API_KEY")  # Use environment variable or default key
     )
     
     # Group transcript segments
@@ -678,7 +678,7 @@ def translate_and_convert_to_speech(text, target_language="es-ES", voice_id="es-
         
         # Initialize Murf client for text-to-speech
         client = Murf(
-            api_key="ap2_ea59bc87-70cf-4326-a2d3-4c6d58ebe307",
+            api_key=os.getenv("MURF_API_KEY"),
         )
         
         audio_files = []
@@ -747,7 +747,7 @@ def create_audio_from_transcript(transcript_file, voice_id, output_audio):
     """Create audio from transcript file using Murf AI"""
     try:
         client = Murf(
-            api_key="ap2_ea59bc87-70cf-4326-a2d3-4c6d58ebe307",
+            api_key=os.getenv("MURF_API_KEY"),
         )
         
         # Read transcript and group by timestamps

@@ -28,7 +28,7 @@ if not murf_api_key or murf_api_key == 'your_murf_api_key_here':
     print("WARNING: MURF_API_KEY not set or using placeholder value!")
     print("Please set your actual Murf API key in the .env file")
 else:
-    print(f"Murf API key loaded: {murf_api_key[:10]}...")
+    print(f"Murf API key loaded")
 
 # Initialize Murf client
 murf_client = Murf(
