@@ -344,7 +344,7 @@ const Index = () => {
           <div className="text-center">
             <h3 className="text-2xl font-bold text-white mb-4">VoiceSync YouTube</h3>
             <p className="text-gray-400 mb-6">
-              Submitted for Murf AI Hackathon 2024 • Built with ❤️ for global accessibility
+              Submitted for Murf AI Hackathon 2025 • Built with ❤️ for global accessibility
             </p>
             <div className="flex justify-center space-x-6">
               <Badge variant="outline" className="border-red-500 text-red-400">
