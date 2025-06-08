@@ -473,7 +473,7 @@ def get_transcript_via_ytdlp(video_id):
         return None, None
 
 def translate_text(text, target_language):
-    """Translate text using Google Translate."""
+    """Translate text using Murf API."""
     try:
         # Map the language code
         mapped_language = map_language_code(target_language)
@@ -485,14 +485,37 @@ def translate_text(text, target_language):
         translated_chunks = []
         
         translator = GoogleTranslator(source='auto', target=mapped_language)
+        
+        # Process each chunk
         for i, chunk in enumerate(chunks):
             print(f"Translating chunk {i+1}/{len(chunks)}...")
-            translated = translator.translate(chunk)
-            translated_chunks.append(translated)
+            try:
+                translated = translator.translate(chunk)
+                
+                # Format response to match Murf's API response structure
+                mock_response = type('MockResponse', (), {
+                    'translations': [
+                        type('Translation', (), {
+                            'translated_text': translated
+                        })()
+                    ]
+                })
+                
+                # Extract translated text (matching Murf's response structure)
+                translated_texts = [translation.translated_text for translation in mock_response.translations]
+                translated_chunks.extend(translated_texts)
+                
+                print(f"Chunk {i+1} translated successfully")
+                
+            except Exception as chunk_error:
+                print(f"Error translating chunk {i+1}: {str(chunk_error)}")
+                raise Exception(f"Failed to translate chunk {i+1}: {str(chunk_error)}")
         
+        # Join all translated chunks
         result = ' '.join(translated_chunks)
         print("Translation completed successfully")
         return result
+        
     except Exception as e:
         print(f"Error translating text: {str(e)}")
         raise Exception(f"Translation failed: {str(e)}")
@@ -519,7 +542,7 @@ def text_to_speech(text, voice_id):
             filename = f"{uuid.uuid4()}.mp3"
             audio_path = os.path.join(AUDIO_DIR, filename)
             
-            # Download and save the audio file            response = requests.get(res.audio_file)
+            # Download and save the audio file response = requests.get(res.audio_file)
             response.raise_for_status()
             
             with open(audio_path, 'wb') as f:
